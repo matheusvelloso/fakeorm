@@ -18,12 +18,12 @@ jobs:
       with:
         dotnet-version: 3.1.301
     - name: Setup NuGet.exe for use with actions
-      uses: NuGet/setup-nuget@1.0.5
+      uses: NuGet/setup-nuget@04b0c2b8d1b97922f67eca497d7cf0bf17b8ffe1
       
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore
     - name: Pack
-      run: dotnet pack --verbosity normal --no-restore --configuration Release
+      run: dotnet pack --verbosity normal --no-restore --configuration Release --version-suffix ${GITHUB_RUN_NUMBER}
     
