@@ -21,9 +21,9 @@ jobs:
       uses: NuGet/setup-nuget@04b0c2b8d1b97922f67eca497d7cf0bf17b8ffe1
       
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet FakeOrm/FakeOrm.csproj restore 
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build FakeOrm/FakeOrm.csproj --no-restore 
     - name: Pack
-      run: dotnet pack --verbosity normal --no-restore --configuration Release --version-suffix ${GITHUB_RUN_NUMBER}
+      run: dotnet pack FakeOrm/FakeOrm.csproj --verbosity normal --no-restore --configuration Release --version-suffix ${GITHUB_RUN_NUMBER}
     
