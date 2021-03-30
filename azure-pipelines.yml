@@ -47,7 +47,7 @@ steps:
     configuration: '$(configuration)'
     nobuild: true
     versioningScheme: 'byEnvVar'
-    versionEnvVar: 'BUILD_BUILDNUMBER1'
+    versionEnvVar: 'BUILD_BUILDNUMBER'
 
 
 - task: PublishBuildArtifacts@1
