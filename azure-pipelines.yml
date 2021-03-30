@@ -10,6 +10,7 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
+  configuration: 'Release'
   project: '**/FakeOrm.AzureTables/FakeOrm.AzureTables.csproj'
 
 steps:
@@ -43,7 +44,7 @@ steps:
   inputs:
     command: 'pack'
     configuration: $(configuration)
-    packagesToPack: $(projectPath)
+    packagesToPack: $(project)
     nobuild: true
     versioningScheme: 'byPrereleaseNumber'
     majorVersion: '1'
