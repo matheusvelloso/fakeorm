@@ -46,7 +46,8 @@ steps:
     packagesToPack: '$(project)'
     configuration: '$(configuration)'
     nobuild: true
-    versioningScheme: 'byBuildNumber'
+    versioningScheme: 'byEnvVar'
+    versionEnvVar: 'BUILD_BUILDNUMBER'
 
 
 - task: PublishBuildArtifacts@1
