@@ -1,5 +1,7 @@
 ![.NET](https://github.com/matheusvelloso/fakeorm/workflows/.NET/badge.svg)
 
+[![Build Status](https://unboxitrepositorios.visualstudio.com/FakeORM/_apis/build/status/matheusvelloso.fakeorm?branchName=master)](https://unboxitrepositorios.visualstudio.com/FakeORM/_build/latest?definitionId=5&branchName=master)
+
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
@@ -27,4 +29,4 @@ common tasks like concattenation, minification, running a local server
 and running tests using [Testem](https://github.com/airportyh/testem)
 and [Protractor](https://github.com/angular/protractor/). -->
 
-	PM> Install-Package FakeOrm.AzureTables -Version 1.0.0-CI-20210330-150412
+	PM> Install-Package FakeOrm.AzureTables -Version 1.0.0
