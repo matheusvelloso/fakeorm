@@ -2,6 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Product>FakeOrm.AzureTables</Product>
+    <Company />
+    <Authors>Matheus Velloso Sá</Authors>
   </PropertyGroup>
 
 	<ItemGroup>
