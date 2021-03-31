@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace FakeOrm.AzureTables.Repository.Interface
+namespace FakeOrm.AzureTables.Repositories.Interface
 {
     public interface IAzureTableRepository<T> where T : ITableEntity
     {

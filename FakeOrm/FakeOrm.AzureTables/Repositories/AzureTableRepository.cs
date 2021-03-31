@@ -1,7 +1,7 @@
 ﻿using FakeOrm.AzureTables.Attributes;
 using FakeOrm.AzureTables.Configurations;
 using FakeOrm.AzureTables.Extensions;
-using FakeOrm.AzureTables.Repository.Interface;
+using FakeOrm.AzureTables.Repositories.Interface;
 using Microsoft.Azure.Cosmos.Table;
 using System;
 using System.Collections.Generic;
@@ -11,7 +11,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace FakeOrm.AzureTables.Repository
+namespace FakeOrm.AzureTables.Repositories
 {
     public class AzureTableRepository<T> : BaseAzureTableRepository, IAzureTableRepository<T> where T : ITableEntity, new()
     {
@@ -68,20 +68,24 @@ namespace FakeOrm.AzureTables.Repository
         public async Task<T> GetByRowKeyAsync(Guid rowKey)
         {
             //Todo: melhorar implementacao
-            return _table.CreateQuery<T>().Where(x => x.RowKey == rowKey.ToString()).FirstOrDefault();
+            return await Task.Run(() => _table.CreateQuery<T>().Where(x => x.RowKey == rowKey.ToString()).FirstOrDefault());
         }
 
         public async Task<IList<T>> GetAsync(Expression<Func<T, IList<IncludePropertyCls<T>>>> include = null)
         {
             //Todo: melhorar implementacao
-            var list = _table.CreateQuery<T>().Where(x => 1 == 1).ToList();
 
-            foreach (var item in list)
-            {
-                ValidateInclude(include, item);
-            }
+            return await Task.Run(() => {
 
-            return list;
+                var list = _table.CreateQuery<T>().Where(x => 1 == 1).ToList();
+
+                foreach (var item in list)
+                {
+                    ValidateInclude(include, item);
+                }
+
+                return list;
+            });
         }
 
         private void ValidateInclude(Expression<Func<T, IList<IncludePropertyCls<T>>>> expression, T entity)
@@ -106,18 +110,6 @@ namespace FakeOrm.AzureTables.Repository
                     property.SetValue(entity, returnValue);
                 }
             }
-
-
-            //var carro = new Carro();
-
-
-
-            ////verificar se a propriedade possue o attr ForeignKey 
-            ////obter o valor da property parametro do FK Attr
-            //var marca = carro.Marca;
-            //var pk = carro.MarcaId;
-            ////
-            //carro.Marca = new RepositoryAbstraction<Marca>().GetByRowKey(pk);
         }
     }
 
@@ -125,15 +117,13 @@ namespace FakeOrm.AzureTables.Repository
     {
         protected string TableNameValidation(Type entity)
         {
-
             foreach (var item in entity.CustomAttributes)
             {
-                if (item.AttributeType.Name != nameof(TableNameAttribute)) continue;
-                foreach (var i in item.ConstructorArguments)
-                {
+                if (item.AttributeType.Name != nameof(TableNameAttribute)) 
+                    continue;
 
+                foreach (var i in item.ConstructorArguments)
                     return i.Value.ToString();
-                }
             }
 
             return entity.Name;
@@ -141,15 +131,13 @@ namespace FakeOrm.AzureTables.Repository
 
         public static string PartitionKeyValidation(Type entity)
         {
-
             foreach (var item in entity.CustomAttributes)
             {
-                if (item.AttributeType.Name != nameof(TablePartitionKeyAttribute)) continue;
+                if (item.AttributeType.Name != nameof(TablePartitionKeyAttribute)) 
+                    continue;
+                
                 foreach (var i in item.ConstructorArguments)
-                {
-
                     return i.Value.ToString();
-                }
             }
             return null;
         }
