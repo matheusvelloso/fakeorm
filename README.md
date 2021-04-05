@@ -25,6 +25,14 @@
 	PM> Install-Package FakeOrm.AzureTables -Version 1.0.2
 ## Usage
 
-	services.UseAzureTablesRepository(Configuration);
-	//OR
-	services.UseAzureTablesRepository(Configuration.GetConnectionString("AzureTableConnection"));
+```cs
+
+public IConfiguration Configuration { get; }
+
+public void ConfigureServices(IServiceCollection services)
+{
+   services.UseAzureTablesRepository(Configuration);
+   //OR
+   services.UseAzureTablesRepository(Configuration.GetConnectionString("AzureTableConnection"));
+}
+```
