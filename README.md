@@ -36,3 +36,14 @@ public void ConfigureServices(IServiceCollection services)
    services.UseAzureTablesRepository(Configuration.GetConnectionString("AzureTableConnection"));
 }
 ```
+
+In appsettings.json:
+
+```json
+{
+  "ConnectionStrings": {
+    "AzureTableConnection": "DefaultEndpointsProtocol=https;AccountName=**************;AccountKey=*********;EndpointSuffix=core.windows.net"
+  }
+}
+
+```
