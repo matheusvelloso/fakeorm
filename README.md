@@ -22,11 +22,4 @@
 
 ## Install
 
-<!--The project requires [node.js](http://nodejs.org/) and
-[Lineman](https://github.com/testdouble/lineman) which is a workflow
-tool built on top of [Grunt](http://www.gruntjs.com) - it takes care of
-common tasks like concattenation, minification, running a local server
-and running tests using [Testem](https://github.com/airportyh/testem)
-and [Protractor](https://github.com/angular/protractor/). -->
-
-	PM> Install-Package FakeOrm.AzureTables -Version 1.0.1
+	PM> Install-Package FakeOrm.AzureTables -Version 1.0.2
