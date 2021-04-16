@@ -71,13 +71,13 @@ namespace FakeOrm.AzureTables.Repositories
             return await Task.Run(() => _table.CreateQuery<T>().Where(x => x.RowKey == rowKey.ToString()).FirstOrDefault());
         }
 
-        public async Task<IList<T>> GetAsync(Expression<Func<T, IList<IncludePropertyCls<T>>>> include = null)
+        public async Task<IList<T>> GetAsync(Expression<Func<T, bool>> predicate, Expression<Func<T, IList<IncludePropertyCls<T>>>> include = null)
         {
             //Todo: melhorar implementacao
 
             return await Task.Run(() => {
 
-                var list = _table.CreateQuery<T>().Where(x => 1 == 1).ToList();
+                var list = _table.CreateQuery<T>().Where(predicate).ToList();
 
                 foreach (var item in list)
                 {

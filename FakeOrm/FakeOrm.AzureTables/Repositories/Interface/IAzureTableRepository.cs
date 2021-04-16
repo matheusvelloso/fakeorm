@@ -11,7 +11,7 @@ namespace FakeOrm.AzureTables.Repositories.Interface
     {
         T GetByRowKey(Guid rowKey);
 
-        Task<IList<T>> GetAsync(Expression<Func<T, IList<IncludePropertyCls<T>>>> include = null);
+        Task<IList<T>> GetAsync(Expression<Func<T, bool>> predicate, Expression<Func<T, IList<IncludePropertyCls<T>>>> include = null);
 
         Task<T> GetByRowKeyAsync(Guid rowKey);
 
