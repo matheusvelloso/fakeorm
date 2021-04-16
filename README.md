@@ -5,7 +5,7 @@ A library based on EF Core, for development using Azure Tables is more productiv
 ## Install
 
 	PM> Install-Package FakeOrm.AzureTables -Version 1.0.3
-## Usage
+## Configuration
 
 ```cs
 public class Startup
@@ -32,7 +32,7 @@ In appsettings.json:
 
 ```
 
-## Implementation
+## Usage
 
 ```csharp
 using FakeOrm.AzureTables.Domain;
