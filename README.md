@@ -47,3 +47,31 @@ namespace YourWorkspace.YourAwesomeClass
     }
 }
 ```
+```csharp
+using FakeOrm.AzureTables.Repository.Interface;
+
+namespace YourWorkspace.YourAwesomeClass
+{
+    [ApiController]
+    [Route("[controller]")]
+    public class UserController : ControllerBase
+    {
+        private readonly IAzureTableRepository<User> _repository;
+
+        public WeatherForecastController(IAzureTableRepository<User> repository)
+        {
+            _repository = repository;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Post()
+        {
+            var user = new User() { };
+
+            await _repository.CreateOrUpdateAsync(user);
+
+            return Ok();
+        }
+    }
+}
+```
