@@ -29,3 +29,18 @@ In appsettings.json:
 }
 
 ```
+
+## Implementation
+
+```csharp
+using FakeOrm.AzureTables.Domain;
+
+namespace YourWorkspace.YourAwesomeClass
+{
+    public class User
+    {
+    	//Public constructor without parameters is required
+        public User() { }
+    }
+}
+```
