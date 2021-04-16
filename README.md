@@ -58,7 +58,7 @@ namespace YourWorkspace.YourAwesomeClass
     {
         private readonly IAzureTableRepository<User> _repository;
 
-        public WeatherForecastController(IAzureTableRepository<User> repository)
+        public UserController(IAzureTableRepository<User> repository)
         {
             _repository = repository;
         }
