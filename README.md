@@ -4,7 +4,7 @@ A library based on EF Core, for development using Azure Tables is more productiv
 
 ## Install
 
-	PM> Install-Package FakeOrm.AzureTables -Version 1.0.2
+	PM> Install-Package FakeOrm.AzureTables -Version 1.0.3
 ## Usage
 
 ```cs
@@ -37,9 +37,10 @@ using FakeOrm.AzureTables.Domain;
 
 namespace YourWorkspace.YourAwesomeClass
 {
-    public class User
+    //inherit from 'BaseEntity'
+    public class User : BaseEntity
     {
-    	//Public constructor without parameters is required
+    	//public constructor without parameters is required
         public User() { }
     }
 }
