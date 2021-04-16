@@ -8,14 +8,16 @@ A library based on EF Core, for development using Azure Tables is more productiv
 ## Usage
 
 ```cs
-
-public IConfiguration Configuration { get; }
-
-public void ConfigureServices(IServiceCollection services)
+public class Startup
 {
-   services.UseAzureTablesRepository(Configuration);
-   //OR
-   services.UseAzureTablesRepository(Configuration.GetConnectionString("AzureTableConnection"));
+   public IConfiguration Configuration { get; }
+
+   public void ConfigureServices(IServiceCollection services)
+   {
+     services.UseAzureTablesRepository(Configuration);
+     //OR
+     services.UseAzureTablesRepository(Configuration.GetConnectionString("AzureTableConnection"));
+   }
 }
 ```
 
