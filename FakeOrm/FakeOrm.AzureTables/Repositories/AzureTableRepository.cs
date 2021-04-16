@@ -38,20 +38,7 @@ namespace FakeOrm.AzureTables.Repositories
             if (String.IsNullOrEmpty(entity.RowKey))
                 entity.RowKey = Guid.NewGuid().ToString().ToLower();
 
-            var key = PartitionKeyValidation(typeof(T));
-
-            if (key != null)
-            {
-                foreach (var item in entity.GetType().GetProperties())
-                {
-                    if (item.Name != key) continue;
-
-                    var partition = entity.GetType().GetProperty(key)?.GetValue(entity);
-                    entity.PartitionKey = partition.ToString();
-                }
-            }
-            else
-                entity.PartitionKey = Guid.NewGuid().ToString().ToLower();
+            entity.PartitionKey = GetPartitionKey(entity);
 
             var operation = TableOperation.InsertOrReplace(entity);
             var result = await _table.ExecuteAsync(operation);
@@ -90,7 +77,10 @@ namespace FakeOrm.AzureTables.Repositories
 
         private void ValidateInclude(Expression<Func<T, IList<IncludePropertyCls<T>>>> expression, T entity)
         {
-            var listProperties = expression.Compile().Invoke(entity);
+            var listProperties = expression?.Compile().Invoke(entity);
+
+            if (listProperties == null)
+                return;
 
             foreach (var p in listProperties)
             {
@@ -110,6 +100,27 @@ namespace FakeOrm.AzureTables.Repositories
                     property.SetValue(entity, returnValue);
                 }
             }
+        }
+
+        private string GetPartitionKey(T entity)
+        {
+            if (!String.IsNullOrEmpty(entity.PartitionKey))
+                return entity.PartitionKey;
+
+            var propertyPartitionKey = PartitionKeyValidation(typeof(T));
+
+            if (propertyPartitionKey != null)
+            {
+                foreach (var item in entity.GetType().GetProperties())
+                {
+                    if (item.Name != propertyPartitionKey) continue;
+
+                    var partition = entity.GetType().GetProperty(propertyPartitionKey)?.GetValue(entity);
+                    return partition.ToString();
+                }
+            }
+
+            return Guid.NewGuid().ToString().ToLower();
         }
     }
 
