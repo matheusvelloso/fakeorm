@@ -1,18 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace FakeOrm.AzureTables.Attributes
 {
-    public class SerializedAttribute : Attribute
+    public class PropertySerializedAttribute : Attribute
     {
         public Type ConvertToType;
 
-        public SerializedAttribute()
+        public PropertySerializedAttribute()
         {
 
         }
-        public SerializedAttribute(Type convertToType)
+        public PropertySerializedAttribute(Type convertToType)
         {
             ConvertToType = convertToType;
         }

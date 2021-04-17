@@ -18,8 +18,11 @@ namespace FakeOrm.AzureTables.Utils
                 Type type = property.PropertyType;
                 string propertyName = PropertyValidation(property);
 
+                var ignoredProperty = (PropertyIgnoredAttribute)Attribute.GetCustomAttribute(property, typeof(PropertyIgnoredAttribute));
+                if (ignoredProperty != null)
+                    continue;
 
-                var attributedProperty = (SerializedAttribute)Attribute.GetCustomAttribute(property, typeof(SerializedAttribute));
+                var attributedProperty = (PropertySerializedAttribute)Attribute.GetCustomAttribute(property, typeof(PropertySerializedAttribute));
                 var valueProperty = entity.GetType().GetProperty(property.Name)?.GetValue(entity);
 
                 if (attributedProperty != null)
@@ -44,7 +47,7 @@ namespace FakeOrm.AzureTables.Utils
             {
                 var propertyName = PropertyValidation(property);
 
-                var attributedProperty = (SerializedAttribute)Attribute.GetCustomAttribute(property, typeof(SerializedAttribute));
+                var attributedProperty = (PropertySerializedAttribute)Attribute.GetCustomAttribute(property, typeof(PropertySerializedAttribute));
                 if (attributedProperty != null)
                 {
                     ValidateDeSerializePropertySerializedAttribute(entity, properties, property, propertyName, attributedProperty);
@@ -100,7 +103,7 @@ namespace FakeOrm.AzureTables.Utils
             }
         }
 
-        private static void ValidateDeSerializePropertySerializedAttribute<TEntity>(TEntity entity, IDictionary<string, EntityProperty> properties, PropertyInfo property, string propertyName, SerializedAttribute attributedProperty)
+        private static void ValidateDeSerializePropertySerializedAttribute<TEntity>(TEntity entity, IDictionary<string, EntityProperty> properties, PropertyInfo property, string propertyName, PropertySerializedAttribute attributedProperty)
         {
             Type resultType = null;
             if (attributedProperty.ConvertToType != null)
