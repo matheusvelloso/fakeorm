@@ -104,9 +104,6 @@ namespace FakeOrm.AzureTables.Repositories
 
         private string GetPartitionKey(T entity)
         {
-            if (!String.IsNullOrEmpty(entity.PartitionKey))
-                return entity.PartitionKey;
-
             var propertyPartitionKey = PartitionKeyValidation(typeof(T));
 
             if (propertyPartitionKey != null)
@@ -119,6 +116,9 @@ namespace FakeOrm.AzureTables.Repositories
                     return partition.ToString();
                 }
             }
+
+            if (!String.IsNullOrEmpty(entity.PartitionKey))
+                return entity.PartitionKey;
 
             return Guid.NewGuid().ToString().ToLower();
         }
