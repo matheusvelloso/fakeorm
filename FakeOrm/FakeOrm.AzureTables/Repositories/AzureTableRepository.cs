@@ -35,15 +35,39 @@ namespace FakeOrm.AzureTables.Repositories
 
         public async Task<T> CreateOrUpdateAsync(T entity)
         {
-            if (String.IsNullOrEmpty(entity.RowKey))
-                entity.RowKey = Guid.NewGuid().ToString().ToLower();
-
-            entity.PartitionKey = GetPartitionKey(entity);
+            ValidateRowPartitionKey(entity);
 
             var operation = TableOperation.InsertOrReplace(entity);
             var result = await _table.ExecuteAsync(operation);
 
             return (T)result.Result;
+        }
+
+        public async Task<IEnumerable<T>> CreateOrUpdateBatchAsync(IEnumerable<T> list)
+        {
+            var groupList = list.Select((x, i) => new
+            {
+                Index = i,
+                Value = x
+            }).GroupBy(x => x.Index / 100).Select(x => x.Select(v => v.Value).ToList()).ToList();
+
+            var listResult = new List<T>();
+
+            foreach (var l in groupList)
+            {
+                var batchOperationObj = new TableBatchOperation();
+
+                foreach (var item in l)
+                {
+                    ValidateRowPartitionKey(item);
+                    batchOperationObj.InsertOrReplace(item);
+                }
+
+                var result = await _table.ExecuteBatchAsync(batchOperationObj);
+                listResult.AddRange(result.Select(x => (T)x.Result));
+            }
+
+            return listResult;
         }
 
         public T GetByRowKey(Guid rowKey)
@@ -62,7 +86,8 @@ namespace FakeOrm.AzureTables.Repositories
         {
             //Todo: melhorar implementacao
 
-            return await Task.Run(() => {
+            return await Task.Run(() =>
+            {
 
                 var list = _table.CreateQuery<T>().Where(predicate).ToList();
 
@@ -73,6 +98,16 @@ namespace FakeOrm.AzureTables.Repositories
 
                 return list;
             });
+        }
+
+        #region [ Private Methods ]
+
+        private void ValidateRowPartitionKey(T entity)
+        {
+            if (String.IsNullOrEmpty(entity.RowKey))
+                entity.RowKey = Guid.NewGuid().ToString().ToLower();
+
+            entity.PartitionKey = GetPartitionKey(entity);
         }
 
         private void ValidateInclude(Expression<Func<T, IList<IncludePropertyCls<T>>>> expression, T entity)
@@ -122,6 +157,8 @@ namespace FakeOrm.AzureTables.Repositories
 
             return Guid.NewGuid().ToString().ToLower();
         }
+
+        #endregion
     }
 
     public abstract class BaseAzureTableRepository
@@ -130,7 +167,7 @@ namespace FakeOrm.AzureTables.Repositories
         {
             foreach (var item in entity.CustomAttributes)
             {
-                if (item.AttributeType.Name != nameof(TableNameAttribute)) 
+                if (item.AttributeType.Name != nameof(TableNameAttribute))
                     continue;
 
                 foreach (var i in item.ConstructorArguments)
@@ -144,9 +181,9 @@ namespace FakeOrm.AzureTables.Repositories
         {
             foreach (var item in entity.CustomAttributes)
             {
-                if (item.AttributeType.Name != nameof(TablePartitionKeyAttribute)) 
+                if (item.AttributeType.Name != nameof(TablePartitionKeyAttribute))
                     continue;
-                
+
                 foreach (var i in item.ConstructorArguments)
                     return i.Value.ToString();
             }

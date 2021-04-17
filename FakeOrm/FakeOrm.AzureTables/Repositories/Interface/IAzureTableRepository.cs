@@ -17,6 +17,8 @@ namespace FakeOrm.AzureTables.Repositories.Interface
 
         Task<T> CreateOrUpdateAsync(T entity);
 
+        Task<IEnumerable<T>> CreateOrUpdateBatchAsync(IEnumerable<T> list);
+
         //Task<IEnumerable<T>> GetAsync(Expression<Func<T, IList<IncludePropertyCls<T>>>> expression = null);
     }
 }
