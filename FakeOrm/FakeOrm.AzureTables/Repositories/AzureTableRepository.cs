@@ -70,52 +70,54 @@ namespace FakeOrm.AzureTables.Repositories
             return listResult;
         }
 
-        public T GetByRowKey(Guid rowKey)
+        public T GetByRowKey(string rowKey)
         {
             //Todo: melhorar implementacao
-            return _table.CreateQuery<T>().Where(x => x.RowKey == rowKey.ToString()).FirstOrDefault();
+            return _table.CreateQuery<T>().Where(x => x.RowKey == rowKey).FirstOrDefault();
         }
 
-        public async Task<T> GetByRowKeyAsync(Guid rowKey)
+        public async Task<T> GetByRowKeyAsync(string rowKey)
         {
             //Todo: melhorar implementacao
-            return await Task.Run(() => _table.CreateQuery<T>().Where(x => x.RowKey == rowKey.ToString()).FirstOrDefault());
+            return await Task.Run(() => GetByRowKey(rowKey));
         }
 
-        public async Task<IEnumerable<T>> GetAsync(Expression<Func<T, bool>> predicate, Expression<Func<T, IList<IncludePropertyCls<T>>>> include = null)
+        public async Task<IEnumerable<T>> GetAsync(Expression<Func<T, bool>> predicate = null, Expression<Func<T, IList<IncludePropertyCls<T>>>> include = null)
         {
             //Todo: melhorar implementacao
 
             return await Task.Run(() =>
             {
+                if (predicate == null) predicate = x => true;
 
                 var list = _table.CreateQuery<T>().Where(predicate).ToList();
 
                 foreach (var item in list)
-                {
                     ValidateInclude(include, item);
-                }
 
                 return list;
             });
         }
 
-        public IEnumerable<T> GetAll()
+        public async Task<T> FirstAsync(Expression<Func<T, bool>> predicate = null, Expression<Func<T, IList<IncludePropertyCls<T>>>> include = null)
         {
-            return _table.ExecuteQuery(new TableQuery<T>()).ToList();
+            var list = await GetAsync(predicate, include);
+
+            return list.First();
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync()
+        public async Task<T> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate = null, Expression<Func<T, IList<IncludePropertyCls<T>>>> include = null)
         {
-            return await Task.Run(() => GetAll());
+            var list = await GetAsync(predicate, include);
+
+            return list.FirstOrDefault();
         }
 
         #region [ Private Methods ]
 
         private void ValidateRowPartitionKey(T entity)
         {
-            if (String.IsNullOrEmpty(entity.RowKey))
-                entity.RowKey = Guid.NewGuid().ToString().ToLower();
+            entity.RowKey = GetRowKey(entity);
 
             entity.PartitionKey = GetPartitionKey(entity);
         }
@@ -168,6 +170,27 @@ namespace FakeOrm.AzureTables.Repositories
             return Guid.NewGuid().ToString().ToLower();
         }
 
+        private string GetRowKey(T entity)
+        {
+            var propertyRowKey = RowKeyValidation(typeof(T));
+
+            if (propertyRowKey != null)
+            {
+                foreach (var item in entity.GetType().GetProperties())
+                {
+                    if (item.Name != propertyRowKey) continue;
+
+                    var partition = entity.GetType().GetProperty(propertyRowKey)?.GetValue(entity);
+                    return partition.ToString();
+                }
+            }
+
+            if (!String.IsNullOrEmpty(entity.RowKey))
+                return entity.RowKey;
+
+            return Guid.NewGuid().ToString().ToLower();
+        }
+
         #endregion
     }
 
@@ -192,6 +215,19 @@ namespace FakeOrm.AzureTables.Repositories
             foreach (var item in entity.CustomAttributes)
             {
                 if (item.AttributeType.Name != nameof(TablePartitionKeyAttribute))
+                    continue;
+
+                foreach (var i in item.ConstructorArguments)
+                    return i.Value.ToString();
+            }
+            return null;
+        }
+
+        public static string RowKeyValidation(Type entity)
+        {
+            foreach (var item in entity.CustomAttributes)
+            {
+                if (item.AttributeType.Name != nameof(TableRowKeyAttribute))
                     continue;
 
                 foreach (var i in item.ConstructorArguments)

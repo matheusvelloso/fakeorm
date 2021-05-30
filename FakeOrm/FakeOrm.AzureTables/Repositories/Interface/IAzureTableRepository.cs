@@ -12,15 +12,15 @@ namespace FakeOrm.AzureTables.Repositories.Interface
         Task<T> CreateOrUpdateAsync(T entity);
         
         Task<IEnumerable<T>> CreateOrUpdateBatchAsync(IEnumerable<T> list);
+
+        Task<T> FirstAsync(Expression<Func<T, bool>> predicate = null, Expression<Func<T, IList<IncludePropertyCls<T>>>> include = null);
         
-        Task<IEnumerable<T>> GetAsync(Expression<Func<T, bool>> predicate, Expression<Func<T, IList<IncludePropertyCls<T>>>> include = null);
+        Task<T> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate = null, Expression<Func<T, IList<IncludePropertyCls<T>>>> include = null);
+
+        Task<IEnumerable<T>> GetAsync(Expression<Func<T, bool>> predicate = null, Expression<Func<T, IList<IncludePropertyCls<T>>>> include = null);
         
-        T GetByRowKey(Guid rowKey);
+        T GetByRowKey(string rowKey);
 
-        Task<T> GetByRowKeyAsync(Guid rowKey);
-
-        IEnumerable<T> GetAll();
-
-        Task<IEnumerable<T>> GetAllAsync();
+        Task<T> GetByRowKeyAsync(string rowKey);
     }
 }

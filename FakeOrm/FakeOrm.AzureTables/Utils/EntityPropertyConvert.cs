@@ -47,6 +47,9 @@ namespace FakeOrm.AzureTables.Utils
             {
                 var propertyName = PropertyValidation(property);
 
+                if (properties.ContainsKey(propertyName))
+                    DeserializeProperty(entity, property, properties[propertyName]);
+
                 var attributedProperty = (PropertySerializedAttribute)Attribute.GetCustomAttribute(property, typeof(PropertySerializedAttribute));
                 if (attributedProperty != null)
                 {
@@ -87,7 +90,13 @@ namespace FakeOrm.AzureTables.Utils
                 case TypeCode.UInt16:
                 case TypeCode.Int32:
                 case TypeCode.UInt32:
-                    property.SetValue(entity, Convert.ChangeType(entityProperty.Int64Value, property.PropertyType));
+                    object value;
+                    if (property.PropertyType.IsEnum) 
+                        value = Enum.ToObject(property.PropertyType, entityProperty.Int64Value);
+                    else 
+                        value = Convert.ChangeType(entityProperty.Int64Value, property.PropertyType);
+
+                    property.SetValue(entity, value);
                     break;
                 case TypeCode.Int64:
                 case TypeCode.UInt64:
@@ -155,6 +164,7 @@ namespace FakeOrm.AzureTables.Utils
 
                     if (typeof(Guid) == type)
                     {
+                        //TODO: SAVE GUID TYPE GUID
                         var guid = (Guid)value;
                         return new EntityProperty(guid.ToString());
                     }
