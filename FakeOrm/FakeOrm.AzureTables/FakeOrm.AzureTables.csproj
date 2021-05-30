@@ -5,6 +5,7 @@
     <Product>FakeOrm.AzureTables</Product>
     <Company />
     <Authors>Matheus Velloso Sá</Authors>
+    <PackageProjectUrl>https://github.com/matheusvelloso/fakeorm</PackageProjectUrl>
   </PropertyGroup>
 
 	<ItemGroup>
