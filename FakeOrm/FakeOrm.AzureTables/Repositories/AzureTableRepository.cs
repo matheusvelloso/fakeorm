@@ -143,7 +143,7 @@ namespace FakeOrm.AzureTables.Repositories
                     object o = Activator.CreateInstance(makeme, new object[] { _connectionString });
 
                     MethodInfo method = makeme.GetMethod(nameof(GetByRowKey));
-                    var returnValue = method.Invoke(o, new object[] { fkValue });
+                    var returnValue = method.Invoke(o, new object[] { fkValue.ToString() });
                     property.SetValue(entity, returnValue);
                 }
             }

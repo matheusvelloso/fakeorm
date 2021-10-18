@@ -9,6 +9,12 @@ namespace FakeOrm.AzureTables.DependencyInjection
 {
     public static class DependencyInjection
     {
+        /// <summary>
+        /// Property 'AzureTableConnection'
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="configuration"></param>
+        /// <returns></returns>
         public static IServiceCollection UseAzureTablesRepository(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<ConnectionStrings>(configuration.GetSection("ConnectionStrings"))
